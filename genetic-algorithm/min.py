@@ -51,7 +51,7 @@ def input_func():
 def reenter_func(input_values):
     print("Вы хотите использовать уже введенные параметры? (yes/no): ", end="")
     answer = input()
-    while answer != "yes" or answer != "no":
+    while answer != "yes" and answer != "no":
         print("Пожалуйста введите \"yes\" или \"no\": ", end="")
         answer = input()
     if answer == "yes":
@@ -74,9 +74,20 @@ def genetic_algoritm(input_values, _func):
 
     def show(ax, xgrid, f, population):
         fitness_values = [himmelblau(ind) for ind in population]
+        if optimum == "min":
+            min_fitness = min(fitness_values)
+        else:
+            max_fitness = max(fitness_values)
         ax.clear()
         ax.plot(xgrid, f, label='f(x)', color='blue')
-        ax.scatter([ind[0] for ind in population], fitness_values, color='green', s=50, zorder=0, label='Population')
+        for i, ind in enumerate(population):
+            if optimum == "min" and fitness_values[i] > min_fitness[0] + 5:
+                ax.scatter(ind[0], fitness_values[i], color='red', s=50, zorder=0)  # Подсвечиваем красным
+            elif optimum == "max" and fitness_values[i] < max_fitness[0] - 5:
+                ax.scatter(ind[0], fitness_values[i], color='red', s=50, zorder=0)  # Подсвечиваем красным
+            else:
+                ax.scatter(ind[0], fitness_values[i], color='green', s=50, zorder=0)  # Обычный цвет
+
         ax.legend(loc='upper left')
         plt.draw()
         plt.gcf().canvas.flush_events()
@@ -96,11 +107,17 @@ def genetic_algoritm(input_values, _func):
 
     random.seed(RANDOM_SEED)
     if optimum == "min":
+        if hasattr(creator, "FitnessMin"):
+            del creator.FitnessMin
+            del creator.Individual
         # класс для значений приспособлености особей
         creator.create("FitnessMin", base.Fitness, weights=(-1.0, ))
         # класс для представления самой особи
         creator.create("Individual", list, fitness=creator.FitnessMin)
     else:
+        if hasattr(creator, "FitnessMax"):
+            del creator.FitnessMax
+            del creator.Individual
         # класс для значений приспособлености особей
         creator.create("FitnessMax", base.Fitness, weights=(1.0, ))
         # класс для представления самой особи
