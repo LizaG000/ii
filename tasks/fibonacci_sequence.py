@@ -1,3 +1,9 @@
+def fibRecurse(n_1, n_2, fib, n):
+    if len(fib) < n:
+        fib.append(str(n_1 + n_2))
+        return fibRecurse(n_2, n_1 + n_2, fib, n)
+    return ', '.join(fib)
+
 def fibSequence(n):
     assert n > 0
     series = [1]
@@ -10,3 +16,4 @@ def fibSequence(n):
         series[i] = str(series[i])
     return(', '.join(series))
 print(fibSequence(int(input('Сколько чисел? '))))
+print(fibRecurse(1, 1, ["1", "1"], int(input('Сколько чисел? '))))
