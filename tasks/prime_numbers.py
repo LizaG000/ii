@@ -17,12 +17,31 @@ def genPrime(currentPrime):
             break
     return newPrime
 
-currentPrime = 2
+num = int(input("Введите число: "))
 
-while True:
-    answer = input('Показать следующее простое число? (Y/N) ')
-    if answer.lower().startswith('y'):
-        print(currentPrime)
-        currentPrime = genPrime(currentPrime)
-    else:
-        break
+if isPrime(num):
+    print("Число простое!")
+else:
+    i = 1
+    while True:
+        if isPrime(num+i):
+            print("Ближайшее постое число - {}".format(num+i))
+            break
+        elif isPrime(num-i):
+            print("Ближайшее постое число - {}".format(num-i))
+            break
+        else:
+            i += 1
+
+
+
+
+# currentPrime = 2
+#
+# while True:
+#     answer = input('Показать следующее простое число? (Y/N) ')
+#     if answer.lower().startswith('y'):
+#         print(currentPrime)
+#         currentPrime = genPrime(currentPrime)
+#     else:
+#         break
