@@ -59,7 +59,7 @@ def filter_dictionary(input_words: str) -> tuple[str, float]:
     len_min = len_max - 4
     for word in dictionary:
         if len_min < len(word) and len_max > len(word):
-            if len(set(word) & set(input_words)) < max(len(word), len(input_words))-2:
+            if len(set(word) & set(input_words)) < max(len(set(word)), len(set(input_words)))-4:
                 continue
             #print(set(word), set(input_words), set(word)& set(input_words))
             if len(word) < 3 or len(input_words) < 3:
@@ -152,7 +152,9 @@ def clearing_input(_input: str):
     _input = _input.split(" ")
     clean_input = len(_input) * ["_"]
     i = 0
+    print(_input)
     while i < len(_input):
+        double_min = 100
         if _input[i] == "_":
             i += 1
             continue
@@ -161,22 +163,24 @@ def clearing_input(_input: str):
             clean_input.insert(i+1, _input[i][-1])
             _input[i] = _input[i][:-1]
             _input[i+1] = "_"
-        if len(_input) - i > 1 and len(_input[i+1]) > 1:
-            input_word, _min = filter_dictionary("".join([_input[i], _input[i+1]]))
-            if _min <= 30:
-                _input[i], clean_input[i] = "_", input_word
-                #print(_min, clean_input[i])
-                _input.pop(i+1)
-                clean_input.pop(i+1)
-                i += 1
-                continue
+        if len(_input) - i > 1 and len(_input[i+1]) > 2 and len(_input[i]) > 2:
+            double_input_word, double_min = filter_dictionary("".join([_input[i], _input[i+1]]))
         input_word, _min = filter_dictionary(_input[i])
         # #print(input_word, _min)
-        if _min <= 30:
+        # print()
+        if _min <= 30 and _min < double_min:
             _input[i], clean_input[i] = "_", input_word
             i += 1
             continue
+        elif double_min <= 30:
+            _input[i], clean_input[i] = "_", double_input_word
+            _input.pop(i+1)
+            clean_input.pop(i+1)
+            i += 1
+            continue
+
         print("Ошибка")
+        print(_min)
         #print(_input)
         break
     return clean_input
@@ -194,12 +198,12 @@ def clearing_input(_input: str):
 #             new_word, _min = filter_dictionary(_input[i])
 #
 
-w = "красное"
+w = "нем"
 m = MorphVocab()
 p = m(w)
 l = m.normal_forms(w)
-#print(l)
-#print(clearing_input("я карсное"))
+print(l)
+print(clearing_input("приветсвую"))
 
 
 test = get_test()
