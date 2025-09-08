@@ -1,4 +1,7 @@
 from natasha import MorphVocab
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+
 
 def get_dictionary_dataset() -> list[str]:
     with open("dictionary_dataset.txt", 'r', encoding='utf-8') as file:
@@ -156,12 +159,44 @@ token_dataset = get_token_dataset()
 x_train, y_train = get_data("training.txt")
 x_test, y_test = get_data("test.txt")
 
+# очистка данных от ошибок
 for i in range(len(x_train)):
-    print(i, x_train[i])
     x_train[i] = clearing_input(x_train[i])
-    print(i, y_train[i])
     y_train[i] = clearing_input(y_train[i])
-    print()
+for i in range(len(x_test)):
+    x_test[i] = clearing_input(x_test[i])
+    y_test[i] = clearing_input(y_test[i])
+
+#превращение в токен
+for i in range(len(x_train)):
+    x_train[i] = transfer_to_token(x_train[i])
+    y_train[i] = transfer_to_token(y_train[i])
+for i in range(len(x_test)):
+    x_test[i] = transfer_to_token(x_test[i])
+    y_test[i] = transfer_to_token(y_test[i])
+
+
+# Создаем последовательную модель
+model = Sequential()
+# Первый полносвязный слой, 800 нейронов, 784 входа в каждый нейрон
+model.add(Dense(800, input_dim=784, activation="relu"))
+# Выходной полносвязный слой, 10 нейронов (по количеству рукописных цифр)
+model.add(Dense(10, activation="softmax"))
+
+model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
+
+# обучение нейросети
+model.fit(x_train, y_train,
+    batch_size=200,
+    validation_split=0.2,
+    epochs=10,
+    verbose=1)
+
+predictions = model.predict(x_train)
+
+scores = model.evaluate(x_test, y_test, verbose=1)
+print("Доля правильных ответов на тестовых данных в процентах: ", round(scores[1]*100, 4))
+
 # w = "нем"
 # m = MorphVocab()
 # p = m(w)
