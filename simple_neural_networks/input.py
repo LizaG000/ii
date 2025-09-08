@@ -110,7 +110,6 @@ def clearing_input(_input: str):
     _input = _input.split(" ")
     clean_input = len(_input) * ["_"]
     i = 0
-    print(_input)
     while i < len(_input):
         double_min = 100
         if _input[i] == "_":
@@ -137,8 +136,6 @@ def clearing_input(_input: str):
             continue
 
         print("Ошибка")
-        print(_min)
-        #print(_input)
         break
     return clean_input
 
