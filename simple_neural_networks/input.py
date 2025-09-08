@@ -1,58 +1,29 @@
 from natasha import MorphVocab
 
-# получение словоря русских слов
 def get_dictionary_dataset() -> list[str]:
     with open("dictionary_dataset.txt", 'r', encoding='utf-8') as file:
         content = file.read()
         return content.split("\n")
 
-def get_test() -> list[str]:
-    with open("test.txt", 'r', encoding='utf-8') as file:
+def get_token_dataset() -> list[str]:
+    with open("token_dataset.txt", 'r', encoding='utf-8') as file:
         content = file.read()
         return content.split("\n")
 
-dictionary = get_dictionary_dataset()
+def get_data(title: str) -> tuple[list[str], list[str]]:
+    with open(title, 'r', encoding='utf-8') as file:
+        content = file.read()
+        content = content.split("\n")
+        x = [content[i] for i in range(0, len(content), 2)]
+        y = [content[i] for i in range(1, len(content), 2)]
+        return x, y
 
-# def filter_dictionary(input_words: str) -> tuple[str, float]:
-#     _min = 100
-#     find_word = input_words
-#     max_len = len(input_words) + 2
-#     if max_len - 4> 0:
-#         min_len = max_len - 4
-#     else:
-#         min_len = 1
-#     for word in dictionary:
-#         if len(word) >= min_len and len(word) <= max_len:
-#             if word == input_words:
-#                 return word, 0
-#             if len(set(word) & set(input_words)) < max(len(word), len(input_words)) // 2:
-#                 # #print(len(set(word) & set(input_words)), input_words, word, set(word) & set(input_words))
-#                 continue
-#             if len(word) < 3 or len(input_words) < 3:
-#                 changes = levenshtein_algorithm(input_words, word)
-#                 # #print(changes)
-#                 if changes < _min:
-#                     _min = changes
-#                     find_word = word
-#             elif word[0] in input_words[0:3] or word[1] in input_words[0:3] or word[2] in input_words[0:3]:
-#                 # #print(word, input_words[0:3], word[0] in input_words[0:3], word[1] in input_words[0:3],
-#                 #       word[2] in input_words[0:3],
-#                 #       word[0] in input_words[0:3] or word[1] in input_words[0:3] or word[2] in input_words[0:3])
-#                 changes = levenshtein_algorithm(input_words, word)
-#             else:
-#                 changes = 100
-#             if changes < _min:
-#                 _min = changes
-#                 find_word = word
-#     return  find_word, _min
 
 def filter_dictionary(input_words: str) -> tuple[str, float]:
     _min = 100
-    # print(input_words)
     find_word = input_words
     vocab = MorphVocab()
     normal_forms = vocab.normal_forms(input_words)[0]
-    #print(normal_forms)
     if normal_forms in dictionary:
         return input_words, 0
     len_max = len(input_words) + 2
@@ -61,7 +32,6 @@ def filter_dictionary(input_words: str) -> tuple[str, float]:
         if len_min < len(word) and len_max > len(word):
             if len(set(word) & set(input_words)) < max(len(set(word)), len(set(input_words)))-4:
                 continue
-            #print(set(word), set(input_words), set(word)& set(input_words))
             if len(word) < 3 or len(input_words) < 3:
                 changes = levenshtein_algorithm(input_words, word)
             elif word[0] in input_words[0:3] or word[1] in input_words[0:3] or word[2] in input_words[0:3]:
@@ -108,11 +78,6 @@ def levenshtein_algorithm(input_word, word) -> float:
                                 break
                         except:
                             continue
-
-
-            # #print((input_word[i-1], word[j-1]) in replacement, (word[j-1], input_word[i-1]) in replacement)
-            # #print(input_word, word, input_word[i-1], word[j-1],i, j, k_equals)
-            # #print(k_array[i][j-1]+1, k_array[i-1][j]+1, k_array[i-1][j-1]+k_equals)
             k = min(k_array[i][j-1]+k_pop, k_array[i-1][j]+1, k_array[i-1][j-1]+k_equals)
             if k > 30 and i == j:
                 return 100
@@ -135,19 +100,12 @@ def levenshtein_algorithm(input_word, word) -> float:
     if len(word) < len(input_word):
         normalized_distance += 1.0  # Штраф за слишком короткое слово
     normalized_distance = max(0, normalized_distance - prefix_bonus)
-    #print(normalized_distance)
-    #print(input_word, word)
-    # for i in k_array:
-    #     for j in i:
-    #         #print(j, end=" ")
-    #     #print()
-    # #print()
     return normalized_distance
 
 def clearing_input(_input: str):
     punctuation_marks = ".,/?!*\"_+&=-\\\n"
-    # Очистка двойных и более пробелов
     _input.strip()
+    _input = _input.lower()
     _input = ' '.join((_input.split()))
     _input = _input.split(" ")
     clean_input = len(_input) * ["_"]
@@ -163,11 +121,10 @@ def clearing_input(_input: str):
             clean_input.insert(i+1, _input[i][-1])
             _input[i] = _input[i][:-1]
             _input[i+1] = "_"
+            continue
         if len(_input) - i > 1 and len(_input[i+1]) > 2 and len(_input[i]) > 2:
             double_input_word, double_min = filter_dictionary("".join([_input[i], _input[i+1]]))
         input_word, _min = filter_dictionary(_input[i])
-        # #print(input_word, _min)
-        # print()
         if _min <= 30 and _min < double_min:
             _input[i], clean_input[i] = "_", input_word
             i += 1
@@ -184,37 +141,38 @@ def clearing_input(_input: str):
         #print(_input)
         break
     return clean_input
-#
-# def clearing_input(_input: str):
-#     punctuation_marks = ".,/?!*\"_+&=-\\\n"
-#     # Очистка двойных и более пробелов
-#     _input.strip()
-#     _input = ' '.join((_input.split()))
-#     _input = _input.split(" ")
-#     clean_input = len(_input) * ["_"]
-#     i = 0
-#     while i < len(_input):
-#         if len(_input) - i > 0 and len(_input[i+1]) > 2:
-#             new_word, _min = filter_dictionary(_input[i])
-#
 
-w = "нем"
-m = MorphVocab()
-p = m(w)
-l = m.normal_forms(w)
-print(l)
-print(clearing_input("приветсвую"))
+def transfer_to_token(_input: list[str]) -> list[int]:
+    token_input = []
+    vocab = MorphVocab()
+    for i in range(len(_input)):
+        normal_forms = vocab.normal_forms(_input[i])[0]
+        if normal_forms in token_dataset:
+            token_input.append(token_dataset.index(normal_forms)+1)
+        else:
+            token_input.append(0)
+    return token_input
 
+dictionary = get_dictionary_dataset()
+token_dataset = get_token_dataset()
 
-test = get_test()
-for i in test:
-    print(i)
-    print(clearing_input(i))
+x_train, y_train = get_data("training.txt")
+x_test, y_test = get_data("test.txt")
+
+for i in range(len(x_train)):
+    print(i, x_train[i])
+    x_train[i] = clearing_input(x_train[i])
+    print(i, y_train[i])
+    y_train[i] = clearing_input(y_train[i])
     print()
-#
-# #прив хочу красное кресло
-# #print(("ж", "ш") == ("ж", "ш"))
-# s = input()
-# # clearing_input(s)
-# #print(clearing_input(s))
+# w = "нем"
+# m = MorphVocab()
+# p = m(w)
+# l = m.normal_forms(w)
+# print(l)
+# print(clearing_input("приветсвую"))
+# s = "Привет. Хачу уточнить, есть ли у вас"
+# clean_input = clearing_input(s)
+# token_input = transfer_to_token(clean_input)
+# print(token_input)
 
