@@ -1,6 +1,11 @@
 from natasha import MorphVocab
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout
+from keras.layers import Dense
+from keras.models import Sequential
+import tensorflow as tf
+from keras import layers
+from keras.preprocessing.sequence import pad_sequences
+# from pip.keras.models import Sequential
+# from tensorflow.keras.layers import Dense, Dropout
 
 
 def get_dictionary_dataset() -> list[str]:
@@ -160,41 +165,68 @@ x_train, y_train = get_data("training.txt")
 x_test, y_test = get_data("test.txt")
 
 # очистка данных от ошибок
-for i in range(len(x_train)):
-    x_train[i] = clearing_input(x_train[i])
-    y_train[i] = clearing_input(y_train[i])
+# for i in range(len(x_train)):
+#     print(i, x_train[i])
+#     x_train[i] = clearing_input(x_train[i])
+#     print(y_train[i])
+#     y_train[i] = clearing_input(y_train[i])
+#     print()
+
 for i in range(len(x_test)):
+    print(i, x_test[i])
     x_test[i] = clearing_input(x_test[i])
+    print(y_test[i])
     y_test[i] = clearing_input(y_test[i])
+    print()
 
 #превращение в токен
-for i in range(len(x_train)):
-    x_train[i] = transfer_to_token(x_train[i])
-    y_train[i] = transfer_to_token(y_train[i])
+# for i in range(len(x_train)):
+#     print(i, x_train[i])
+#     x_train[i] = transfer_to_token(x_train[i])
+#     print(y_train[i])
+#     y_train[i] = transfer_to_token(y_train[i])
+#     print()
+
 for i in range(len(x_test)):
+    print(i, x_test[i])
     x_test[i] = transfer_to_token(x_test[i])
+    print(y_test[i])
     y_test[i] = transfer_to_token(y_test[i])
+    print()
 
 
-# Создаем последовательную модель
-model = Sequential()
-# Первый полносвязный слой, 800 нейронов, 784 входа в каждый нейрон
-model.add(Dense(800, input_dim=784, activation="relu"))
-# Выходной полносвязный слой, 10 нейронов (по количеству рукописных цифр)
-model.add(Dense(10, activation="softmax"))
+# x_padded = pad_sequences(x_train, padding="post", maxlen=100)
+# y_padded = pad_sequences(y_train, padding="post", maxlen=100)
 
-model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
+# x_padded = tf.constant(x_padded, dtype=tf.int64)
+# y_padded = tf.constant(y_padded, dtype=tf.int64)
 
-# обучение нейросети
-model.fit(x_train, y_train,
-    batch_size=200,
-    validation_split=0.2,
-    epochs=10,
-    verbose=1)
+x_padded_test = pad_sequences(x_test, padding="post", maxlen=100)
+y_padded_test = pad_sequences(y_test, padding="post", maxlen=100)
 
-predictions = model.predict(x_train)
+x_padded_test = tf.constant(x_padded_test, dtype=tf.int64)
+y_padded_test = tf.constant(y_padded_test, dtype=tf.int64)
+vocab_size = 104
+model = Sequential([
+    layers.Input(shape=(None,), dtype=tf.int64),
+    layers.Embedding(input_dim=vocab_size, output_dim=128, mask_zero=True),
+    layers.LSTM(64, return_sequences=True),
+    layers.TimeDistributed(layers.Dense(104, activation="softmax"))
+])
 
-scores = model.evaluate(x_test, y_test, verbose=1)
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=["accuracy"])
+# model.fit(x_padded, y_padded,batch_size=200,
+#     validation_split=0.2,
+#     epochs=10,
+#     verbose=1 )
+
+# model.save_weights('model_full.weights.h5') 
+model.load_weights('model_full.weights.h5')
+
+
+# predictions = model.predict(x_train)
+
+scores = model.evaluate(x_padded_test, y_padded_test, verbose=1)
 print("Доля правильных ответов на тестовых данных в процентах: ", round(scores[1]*100, 4))
 
 # w = "нем"
