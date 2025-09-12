@@ -2,6 +2,8 @@
 venv/
 env/
 
+# Ignore dynaconf secret files
+config.toml
 # Игнорировать файлы Python байт-кода
 __pycache__/
 *.pyc
