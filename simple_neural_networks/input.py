@@ -149,188 +149,171 @@ def clearing_input(_input: str):
         break
     return clean_input
 
-def transfer_to_token(_input: list[str]) -> list[int]:
-    token_input = []
-    vocab = MorphVocab()
-    for i in range(len(_input)):
-        normal_forms = vocab.normal_forms(_input[i])[0]
-        if normal_forms in token_dataset:
-            token_input.append(token_dataset.index(normal_forms)+1)
-        else:
-            token_input.append(0)
-    return token_input
-def tokens_to_words(token_list):
-    words = []
-    for t in token_list:
-        if t == 0 or t == start_token or t == end_token:
-            continue
-        words.append(token_dataset[t-1])  # т.к. токены +1 при генерации
-    return words
 
 
 dictionary = get_dictionary_dataset()
 token_dataset = get_token_dataset()
-
-x_train, y_train = get_data("training.txt")
-x_test, y_test = get_data("test.txt")
-# очистка данных от ошибок
-for i in range(len(x_train)):
-    print(i, x_train[i])
-    x_train[i] = clearing_input(x_train[i])
-    print(y_train[i])
-    y_train[i] = clearing_input(y_train[i])
-    print()
-
-# for i in range(len(x_test)):
-#     print(i, x_test[i])
-#     x_test[i] = clearing_input(x_test[i])
-#     print(y_test[i])
-#     y_test[i] = clearing_input(y_test[i])
+print(clearing_input("Что у меня в карзине? чупрыный"))
+# x_train, y_train = get_data("training.txt")
+# x_test, y_test = get_data("test.txt")
+# # очистка данных от ошибок
+# for i in range(len(x_train)):
+#     print(i, x_train[i])
+#     x_train[i] = clearing_input(x_train[i])
+#     print(y_train[i])
+#     y_train[i] = clearing_input(y_train[i])
 #     print()
 
-#превращение в токен
-for i in range(len(x_train)):
-    print(i, x_train[i])
-    x_train[i] = transfer_to_token(x_train[i])
-    print(y_train[i])
-    y_train[i] = transfer_to_token(y_train[i])
-    print()
+# # for i in range(len(x_test)):
+# #     print(i, x_test[i])
+# #     x_test[i] = clearing_input(x_test[i])
+# #     print(y_test[i])
+# #     y_test[i] = clearing_input(y_test[i])
+# #     print()
 
-# for i in range(len(x_test)):
-#     print(i, x_test[i])
-#     x_test[i] = transfer_to_token(x_test[i])
-#     print(y_test[i])
-#     y_test[i] = transfer_to_token(y_test[i])
+# #превращение в токен
+# for i in range(len(x_train)):
+#     print(i, x_train[i])
+#     x_train[i] = transfer_to_token(x_train[i])
+#     print(y_train[i])
+#     y_train[i] = transfer_to_token(y_train[i])
 #     print()
 
-# x_padded = pad_sequences(x_train, padding="post", maxlen=15)
-# y_padded = pad_sequences(y_train, padding="post", maxlen=15)
+# # for i in range(len(x_test)):
+# #     print(i, x_test[i])
+# #     x_test[i] = transfer_to_token(x_test[i])
+# #     print(y_test[i])
+# #     y_test[i] = transfer_to_token(y_test[i])
+# #     print()
 
-# x_padded = tf.constant(x_padded, dtype=tf.int64)
-# y_padded = tf.constant(y_padded, dtype=tf.int64)
+# # x_padded = pad_sequences(x_train, padding="post", maxlen=15)
+# # y_padded = pad_sequences(y_train, padding="post", maxlen=15)
 
-# # x_padded_test = pad_sequences(x_test, padding="post", maxlen=100)
-# # y_padded_test = pad_sequences(y_test, padding="post", maxlen=100)
+# # x_padded = tf.constant(x_padded, dtype=tf.int64)
+# # y_padded = tf.constant(y_padded, dtype=tf.int64)
 
-# # x_padded_test = tf.constant(x_padded_test, dtype=tf.int64)
-# # y_padded_test = tf.constant(y_padded_test, dtype=tf.int64)
-# # print(x_padded_test[0])
-# # print(y_padded_test[0])
-# vocab_size = 104
-# model = Sequential([
-#     layers.Input(shape=(None,), dtype=tf.int64),
-#     layers.Embedding(input_dim=vocab_size, output_dim=128, mask_zero=True),
-#     layers.LSTM(320, return_sequences=True),
-#     layers.TimeDistributed(layers.Dense(104, activation="softmax"))
-# ])
+# # # x_padded_test = pad_sequences(x_test, padding="post", maxlen=100)
+# # # y_padded_test = pad_sequences(y_test, padding="post", maxlen=100)
 
-# model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=["accuracy"])
-# model.fit(x_padded, y_padded,batch_size=200,
-#     validation_split=0.2,
-#     epochs=10,
-#     verbose=1 )
+# # # x_padded_test = tf.constant(x_padded_test, dtype=tf.int64)
+# # # y_padded_test = tf.constant(y_padded_test, dtype=tf.int64)
+# # # print(x_padded_test[0])
+# # # print(y_padded_test[0])
+# # vocab_size = 104
+# # model = Sequential([
+# #     layers.Input(shape=(None,), dtype=tf.int64),
+# #     layers.Embedding(input_dim=vocab_size, output_dim=128, mask_zero=True),
+# #     layers.LSTM(320, return_sequences=True),
+# #     layers.TimeDistributed(layers.Dense(104, activation="softmax"))
+# # ])
 
-# model.save_weights('model_full.weights.h5') 
-# model.load_weights('model_full.weights.h5')
+# # model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=["accuracy"])
+# # model.fit(x_padded, y_padded,batch_size=200,
+# #     validation_split=0.2,
+# #     epochs=10,
+# #     verbose=1 )
 
-# scores = model.evaluate(x_padded_test, y_padded_test, verbose=1)
-# print("Доля правильных ответов на тестовых данных в процентах: ", round(scores[1]*100, 4))
-start_token = 104   # первый свободный индекс
-end_token = 105     # второй свободный индекс
-vocab_size = 106 
-embedding_dim = 128
-lstm_units = 256
+# # model.save_weights('model_full.weights.h5') 
+# # model.load_weights('model_full.weights.h5')
 
-# ENCODER
-encoder_inputs = layers.Input(shape=(None,), dtype="int64")
-x = layers.Embedding(vocab_size, embedding_dim, mask_zero=True)(encoder_inputs)
-encoder_outputs, state_h, state_c = layers.LSTM(lstm_units, return_state=True)(x)
-encoder_states = [state_h, state_c]
+# # scores = model.evaluate(x_padded_test, y_padded_test, verbose=1)
+# # print("Доля правильных ответов на тестовых данных в процентах: ", round(scores[1]*100, 4))
+# start_token = 104   # первый свободный индекс
+# end_token = 105     # второй свободный индекс
+# vocab_size = 106 
+# embedding_dim = 128
+# lstm_units = 256
 
-# DECODER
-decoder_inputs = layers.Input(shape=(None,), dtype="int64")
-y = layers.Embedding(vocab_size, embedding_dim, mask_zero=True)(decoder_inputs)
-decoder_lstm = layers.LSTM(lstm_units, return_sequences=True, return_state=True)
-decoder_outputs, _, _ = decoder_lstm(y, initial_state=encoder_states)
-decoder_dense = layers.Dense(vocab_size, activation="softmax")
-decoder_outputs = decoder_dense(decoder_outputs)
+# # ENCODER
+# encoder_inputs = layers.Input(shape=(None,), dtype="int64")
+# x = layers.Embedding(vocab_size, embedding_dim, mask_zero=True)(encoder_inputs)
+# encoder_outputs, state_h, state_c = layers.LSTM(lstm_units, return_state=True)(x)
+# encoder_states = [state_h, state_c]
 
-# Модель "обучение"
-model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
+# # DECODER
+# decoder_inputs = layers.Input(shape=(None,), dtype="int64")
+# y = layers.Embedding(vocab_size, embedding_dim, mask_zero=True)(decoder_inputs)
+# decoder_lstm = layers.LSTM(lstm_units, return_sequences=True, return_state=True)
+# decoder_outputs, _, _ = decoder_lstm(y, initial_state=encoder_states)
+# decoder_dense = layers.Dense(vocab_size, activation="softmax")
+# decoder_outputs = decoder_dense(decoder_outputs)
 
-model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
+# # Модель "обучение"
+# model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
-# допустим, у тебя уже есть pad_sequences
-encoder_input_data = pad_sequences(x_train, padding="post", maxlen=20)
-decoder_input_data = pad_sequences([[start_token] + seq for seq in y_train], padding="post", maxlen=20)
-decoder_output_data = pad_sequences([seq + [end_token] for seq in y_train], padding="post", maxlen=20)
+# model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
 
-# decoder_output должен быть (batch, seq_len, 1)
-decoder_output_data = tf.expand_dims(decoder_output_data, -1)
+# # допустим, у тебя уже есть pad_sequences
+# encoder_input_data = pad_sequences(x_train, padding="post", maxlen=20)
+# decoder_input_data = pad_sequences([[start_token] + seq for seq in y_train], padding="post", maxlen=20)
+# decoder_output_data = pad_sequences([seq + [end_token] for seq in y_train], padding="post", maxlen=20)
 
-model.fit([encoder_input_data, decoder_input_data], decoder_output_data,
-          batch_size=64,
-          epochs=20,
-          validation_split=0.2)
+# # decoder_output должен быть (batch, seq_len, 1)
+# decoder_output_data = tf.expand_dims(decoder_output_data, -1)
 
-
-# Сохранение весов
-model.save_weights("model_full.weights.h5")
-
-# Энкодер
-encoder_model = Model(encoder_inputs, encoder_states)
-
-# Декодер
-deco# Декодер инференса
-decoder_state_input_h = Input(shape=(lstm_units,))
-decoder_state_input_c = Input(shape=(lstm_units,))
-decoder_states_inputs = [decoder_state_input_h, decoder_state_input_c]
-
-# Создаём embedding слой заново, но с теми же весами
-decoder_inputs_inf = Input(shape=(None,), dtype='int64')
-decoder_embedding_inf = model.layers[2](decoder_inputs_inf)  # слой Embedding из обученной модели
-
-decoder_outputs2, state_h2, state_c2 = decoder_lstm(
-    decoder_embedding_inf, initial_state=decoder_states_inputs
-)
-
-decoder_states2 = [state_h2, state_c2]
-decoder_outputs2 = decoder_dense(decoder_outputs2)
-
-decoder_model = Model(
-    [decoder_inputs_inf] + decoder_states_inputs,
-    [decoder_outputs2] + decoder_states2
-)
-
-def decode_sequence(input_seq, max_len=20):
-    states_value = encoder_model.predict(input_seq, verbose=0)
-    target_seq = np.array([[start_token]])
-    decoded_tokens = []
-
-    for _ in range(max_len):
-        output_tokens, h, c = decoder_model.predict([target_seq] + states_value, verbose=0)
-        sampled_token_index = np.argmax(output_tokens[0, -1, :])
-        if sampled_token_index == end_token:
-            break
-        decoded_tokens.append(sampled_token_index)
-        target_seq = np.array([[sampled_token_index]])
-        states_value = [h, c]
-
-    return decoded_tokens
+# model.fit([encoder_input_data, decoder_input_data], decoder_output_data,
+#           batch_size=64,
+#           epochs=20,
+#           validation_split=0.2)
 
 
-encoder_input_data_test = pad_sequences(x_test, padding="post", maxlen=20)
+# # Сохранение весов
+# model.save_weights("model_full.weights.h5")
 
-for i in range(len(x_test)):
-    input_seq = np.array([encoder_input_data_test[i]])
-    decoded_tokens = decode_sequence(input_seq)
+# # Энкодер
+# encoder_model = Model(encoder_inputs, encoder_states)
 
-    input_words = tokens_to_words(x_test[i])
-    true_words = tokens_to_words(y_test[i])
-    pred_words = tokens_to_words(decoded_tokens)
+# # Декодер
+# deco# Декодер инференса
+# decoder_state_input_h = Input(shape=(lstm_units,))
+# decoder_state_input_c = Input(shape=(lstm_units,))
+# decoder_states_inputs = [decoder_state_input_h, decoder_state_input_c]
 
-    print(f"Example {i}:")
-    print("INPUT  :", " ".join(input_words))
-    print("TARGET :", " ".join(true_words))
-    print("PREDICT:", " ".join(pred_words))
-    print("="*50)
+# # Создаём embedding слой заново, но с теми же весами
+# decoder_inputs_inf = Input(shape=(None,), dtype='int64')
+# decoder_embedding_inf = model.layers[2](decoder_inputs_inf)  # слой Embedding из обученной модели
+
+# decoder_outputs2, state_h2, state_c2 = decoder_lstm(
+#     decoder_embedding_inf, initial_state=decoder_states_inputs
+# )
+
+# decoder_states2 = [state_h2, state_c2]
+# decoder_outputs2 = decoder_dense(decoder_outputs2)
+
+# decoder_model = Model(
+#     [decoder_inputs_inf] + decoder_states_inputs,
+#     [decoder_outputs2] + decoder_states2
+# )
+
+# def decode_sequence(input_seq, max_len=20):
+#     states_value = encoder_model.predict(input_seq, verbose=0)
+#     target_seq = np.array([[start_token]])
+#     decoded_tokens = []
+
+#     for _ in range(max_len):
+#         output_tokens, h, c = decoder_model.predict([target_seq] + states_value, verbose=0)
+#         sampled_token_index = np.argmax(output_tokens[0, -1, :])
+#         if sampled_token_index == end_token:
+#             break
+#         decoded_tokens.append(sampled_token_index)
+#         target_seq = np.array([[sampled_token_index]])
+#         states_value = [h, c]
+
+#     return decoded_tokens
+
+
+# encoder_input_data_test = pad_sequences(x_test, padding="post", maxlen=20)
+
+# for i in range(len(x_test)):
+#     input_seq = np.array([encoder_input_data_test[i]])
+#     decoded_tokens = decode_sequence(input_seq)
+
+#     input_words = tokens_to_words(x_test[i])
+#     true_words = tokens_to_words(y_test[i])
+#     pred_words = tokens_to_words(decoded_tokens)
+
+#     print(f"Example {i}:")
+#     print("INPUT  :", " ".join(input_words))
+#     print("TARGET :", " ".join(true_words))
+#     print("PREDICT:", " ".join(pred_words))
+#     print("="*50)
