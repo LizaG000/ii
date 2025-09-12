@@ -8,7 +8,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 
 def get_json() -> dict:
-    with open("intents.json", "r", encoding="utf-8") as f:
+    with open("data/intents.json", "r", encoding="utf-8") as f:
         return json.load(f)
 #
 # def train_model_keras():
@@ -88,10 +88,10 @@ def train_model():
     model = LogisticRegression()
     model.fit(x, y_labels)
 
-    with open('model.pkl', "wb") as f:
+    with open('models/model.pkl', "wb") as f:
         pickle.dump(model, f)
 
-    with open('vectorizer.pkl', "wb") as f:
+    with open('models/vectorizer.pkl', "wb") as f:
         pickle.dump(vectorizer, f)
 
 train_model()
