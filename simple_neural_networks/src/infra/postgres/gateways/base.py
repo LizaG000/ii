@@ -5,25 +5,27 @@ from loguru import logger
 
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
-from user_microservice.infra.postgres.tables import BaseDBModel
+from src.infra.postgres.tables import BaseDBModel
 from sqlalchemy import Select
-from sqlalchemy.sql.dml import ReturningInsert
-from sqlalchemy.sql.dml import ReturningUpdate
+from sqlalchemy.sql.dml import ReturningInsert, ReturningUpdate
+from typing import TypeVar, Generic, Type
 
 TAppliable = Select | ReturningInsert | ReturningUpdate
+
+TTable = TypeVar('TTable', bound=BaseDBModel)
+TEntity = TypeVar('TEntity', bound=BaseModel)
+TCreate = TypeVar('TCreate', bound=BaseModel)
 
 @dataclass(slots=True, kw_only=True)
 class PostgresGateway:
     session: AsyncSession
 
 @dataclass(slots=True, kw_only=True)
-class GetAllGate[TTable: BaseDBModel, TEntity: BaseModel](
-    PostgresGateway,
-):
-    table: type[TTable]
-    schema_type: type[TEntity]
+class GetAllGate(Generic[TTable, TEntity], PostgresGateway):
+    table: Type[TTable]
+    schema_type: Type[TEntity]
 
-    async def __call__(self,) -> list[TEntity]:
+    async def __call__(self) -> list[TEntity]:
         logger.info(1)
         stmt = select(*self.table.group_by_fields())
         logger.info(stmt)
@@ -32,11 +34,9 @@ class GetAllGate[TTable: BaseDBModel, TEntity: BaseModel](
         return [self.schema_type.model_validate(result) for result in results]
 
 @dataclass(slots=True, kw_only=True)
-class CreateGate[TTable: BaseDBModel, TCreate: BaseModel](
-    PostgresGateway,
-):
-    table: type[TTable]
-    create_schema_type: type[TCreate]
+class CreateGate(Generic[TTable, TCreate], PostgresGateway):
+    table: Type[TTable]
+    create_schema_type: Type[TCreate]
 
     async def __call__(self, entity: TCreate) -> None:
         stmt = insert(self.table).values(**entity.model_dump())

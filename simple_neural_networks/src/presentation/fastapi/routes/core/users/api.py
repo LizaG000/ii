@@ -8,12 +8,13 @@ from src.usecase.users.get_all import GetUsersUsecase
 
 ROUTER = APIRouter(route_class=DishkaRoute)
 
-@ROUTER.get('', status_code=status.HTTP_200_OK)
-async def get_users(usecase: FromDishka[GetUsersUsecase]) -> list[UserSchemas]:
-    return await usecase()
+# @ROUTER.get('', status_code=status.HTTP_200_OK)
+# async def get_users(usecase: FromDishka[GetUsersUsecase]) -> list[UserSchemas]:
+#     return await usecase()
 
 @ROUTER.post('', status_code=status.HTTP_200_OK)
 async def create_users(
-    usecase: FromDishka[CreateUserUsecase],
+    # usecase: FromDishka[CreateUserUsecase],
     user: CreateUserSchema) -> None:
-    await usecase(user)
+    pass
+    # await usecase(user)
