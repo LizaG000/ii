@@ -4,6 +4,7 @@ from sqlalchemy import UUID
 from sqlalchemy import String
 from sqlalchemy import Integer
 from sqlalchemy import DateTime
+from sqlalchemy import Float, ForeignKey
 from sqlalchemy import func
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 from typing import Annotated
@@ -49,13 +50,20 @@ class BaseDBModel(DeclarativeBase):
 class UserModel(BaseDBModel):
     __tablename__ = 'users'
     id: Mapped[uuid_pk]
-    name: Mapped[str] = mapped_column(
+    first_name: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
+        default='Гость'
     )
-    age: Mapped[int] = mapped_column(
-        Integer,
-        nullable=True
+    last_name: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+        default='Гость'
+    )
+    middle_name: Mapped[str] = mapped_column(
+        String(255),
+        nullable=True,
+        default=None
     )
     phone: Mapped[int] = mapped_column(
         Integer,
@@ -65,8 +73,62 @@ class UserModel(BaseDBModel):
         String(200),
         nullable=False
     )
-    password: Mapped[str] = mapped_column(
-        String(200),
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+class CategoriesModel(BaseDBModel):
+    __tablename__ = "categories"
+    id: Mapped[uuid_pk]
+    name: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+class ColorsModel(BaseDBModel):
+    __tablename__ = "colors"
+    id: Mapped[uuid_pk]
+    name: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+class ColorsModel(BaseDBModel):
+    __tablename__ = "colors"
+    id: Mapped[uuid_pk]
+    name: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+
+class CatalogModel(BaseDBModel):
+    __tablename__ = 'catalog'
+    id: Mapped[uuid_pk]
+    id_categories: Mapped[UUID] = mapped_column(
+        UUID,
+        ForeignKey('db_schema.categories.id'),
+        nullable=False
+    )
+    name: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
+    discount: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+    )
+    count: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+    )
+    price: Mapped[float] = mapped_column(
+        Float,
         nullable=False
     )
     created_at: Mapped[created_at]

@@ -32,7 +32,10 @@ dependencies = [
     "markupsafe (>=3.0.2,<4.0.0)",
     "psycopg (>=3.2.9,<4.0.0)",
     "psycopg-binary (>=3.2.9,<4.0.0)",
-    "sqlalchemy (>=2.0.41,<3.0.0)"
+    "sqlalchemy (>=2.0.41,<3.0.0)",
+    "pytelegrambotapi (>=4.29.1,<5.0.0)",
+    "natasha (>=1.6.0,<2.0.0)",
+    "scikit-learn (>=1.7.2,<2.0.0)"
 ]
 
 
