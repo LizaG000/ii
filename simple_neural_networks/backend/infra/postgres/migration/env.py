@@ -14,9 +14,9 @@ from sqlalchemy import text
 from alembic import context
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from src.config import get_config
-from src.infra.postgres.tables import *
-from src.infra.postgres.schemas import enabled_pg_schemas
+from backend.config import get_config
+from backend.infra.postgres.tables import *
+from backend.infra.postgres.schemas import enabled_pg_schemas
 
 
 cfg = get_config()

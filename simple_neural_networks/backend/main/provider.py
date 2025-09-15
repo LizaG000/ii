@@ -5,12 +5,12 @@ from dishka import provide
 from dishka import provide_all
 from fastapi import Request
 
-from src.config import Config
-from src.config import ApiConfig
-from src.config import DatabaseConfig
+from backend.config import Config
+from backend.config import ApiConfig
+from backend.config import DatabaseConfig
 
-from src.usecase.users.create import CreateUserUsecase
-from src.usecase.users.get_all import GetUsersUsecase
+from backend.usecase.users.create import CreateUserUsecase
+from backend.usecase.users.get_all import GetUsersUsecase
 
 class MainProvider(Provider):
     scope = Scope.REQUEST

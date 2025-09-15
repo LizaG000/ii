@@ -1,6 +1,6 @@
 from uuid import UUID
 from datetime import datetime
-from src.application.schemas.common import BaseModel
+from backend.application.schemas.common import BaseModel
 
 class UserSchemas(BaseModel):
     id: UUID

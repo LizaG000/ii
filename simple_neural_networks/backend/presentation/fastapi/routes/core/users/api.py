@@ -2,9 +2,9 @@ from dishka.integrations.fastapi import DishkaRoute
 from dishka.integrations.fastapi import FromDishka
 from fastapi import APIRouter
 from fastapi import status
-from src.application.schemas.users import CreateUserSchema, UserSchemas
-from src.usecase.users.create import CreateUserUsecase
-from src.usecase.users.get_all import GetUsersUsecase
+from backend.application.schemas.users import CreateUserSchema, UserSchemas
+from backend.usecase.users.create import CreateUserUsecase
+from backend.usecase.users.get_all import GetUsersUsecase
 
 ROUTER = APIRouter(route_class=DishkaRoute)
 

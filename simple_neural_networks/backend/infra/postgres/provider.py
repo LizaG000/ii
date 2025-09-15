@@ -3,10 +3,10 @@ from dishka import Provider, Scope, provide, provide_all
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
-from src.config import DatabaseConfig
+from backend.config import DatabaseConfig
 from loguru import logger
-from src.infra.postgres.gateways.base import GetAllGate
-from src.infra.postgres.gateways.base import CreateGate
+from backend.infra.postgres.gateways.base import GetAllGate
+from backend.infra.postgres.gateways.base import CreateGate
 
 class PostgresProvider(Provider):
     scope = Scope.REQUEST

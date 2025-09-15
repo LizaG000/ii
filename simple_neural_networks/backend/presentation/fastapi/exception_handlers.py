@@ -4,7 +4,7 @@ from starlette import status
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from src.application.errors import BaseError
+from backend.application.errors import BaseError
 
 def _exception_handler(_: Request, exc: BaseError) -> JSONResponse:
     logger.error('Exception', error=exc.message)

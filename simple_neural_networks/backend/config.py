@@ -3,7 +3,7 @@ from pydantic import ConfigDict
 from dynaconf import Dynaconf
 from loguru import logger
 
-from src.application.schemas.common import BaseSchema
+from backend.application.schemas.common import BaseSchema
 
 
 class ApiConfig(BaseSchema):
