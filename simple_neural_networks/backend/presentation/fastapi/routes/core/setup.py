@@ -1,7 +1,7 @@
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter
 
-from src.presentation.fastapi.routes.core.users.api import ROUTER as USER_ROUTER
+from backend.presentation.fastapi.routes.core.users.api import ROUTER as USER_ROUTER
 
 def setup_core_router() -> APIRouter:
     router = APIRouter(route_class=DishkaRoute)

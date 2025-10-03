@@ -10,7 +10,7 @@ RUN pip install poetry
 
 RUN poetry config virtualenvs.create false && poetry install --no-interaction --no-ansi --no-root
 
-COPY src /app/src
+COPY backend /app/backend
 
-CMD ["uvicorn", "src.main.web:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "backend.main.web:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 

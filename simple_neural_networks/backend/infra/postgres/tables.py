@@ -4,6 +4,7 @@ from sqlalchemy import UUID
 from sqlalchemy import String
 from sqlalchemy import Integer
 from sqlalchemy import DateTime
+from sqlalchemy import ARRAY
 from sqlalchemy import Float, ForeignKey
 from sqlalchemy import func
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
@@ -47,9 +48,13 @@ class BaseDBModel(DeclarativeBase):
 
         return payload
 
-class UserModel(BaseDBModel):
+class UsersModel(BaseDBModel):
     __tablename__ = 'users'
-    id: Mapped[uuid_pk]
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        nullable=False
+    )
     first_name: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
@@ -76,7 +81,7 @@ class UserModel(BaseDBModel):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
-class CategoryModel(BaseDBModel):
+class CategoriesModel(BaseDBModel):
     __tablename__ = "categories"
     id: Mapped[uuid_pk]
     name: Mapped[str] = mapped_column(
@@ -86,7 +91,7 @@ class CategoryModel(BaseDBModel):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
-class ColorModel(BaseDBModel):
+class ColorsModel(BaseDBModel):
     __tablename__ = "colors"
     id: Mapped[uuid_pk]
     name: Mapped[str] = mapped_column(
@@ -96,7 +101,7 @@ class ColorModel(BaseDBModel):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
-class MaterialModel(BaseDBModel):
+class MaterialsModel(BaseDBModel):
     __tablename__ = "materials"
     id: Mapped[uuid_pk]
     name: Mapped[str] = mapped_column(
@@ -106,18 +111,13 @@ class MaterialModel(BaseDBModel):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
-
-class CatalogModel(BaseDBModel):
-    __tablename__ = 'catalog'
+class ProductsModel(BaseDBModel):
+    __tablename__ = 'products'
     id: Mapped[uuid_pk]
-    id_category: Mapped[UUID] = mapped_column(
+    id_category: Mapped[uuid.UUID] = mapped_column(
         UUID,
         ForeignKey('db_schema.categories.id'),
         nullable=False
-    )
-    name: Mapped[str] = mapped_column(
-        String(255),
-        nullable=False,
     )
     name: Mapped[str] = mapped_column(
         String(255),
@@ -135,19 +135,38 @@ class CatalogModel(BaseDBModel):
         Float,
         nullable=False
     )
+    discount: Mapped[float] = mapped_column(
+        Float,
+        nullable=False
+    )
+    length: Mapped[float] = mapped_column(
+        Float,
+        nullable=False
+    )
+    height: Mapped[float] = mapped_column(
+        Float,
+        nullable=False
+    )
+    width: Mapped[float] = mapped_column(
+        Float,
+        nullable=False
+    )
+    images: Mapped[list[str]] = mapped_column(
+        ARRAY(String(255)),
+        nullable=False
+    )
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
-
-class CatalogMaterialModel(BaseDBModel):
-    __tablename__ = 'catalog_material'
+class ProductsMaterialsModel(BaseDBModel):
+    __tablename__ = 'products_materials'
     id: Mapped[uuid_pk]
-    id_catalog: Mapped[UUID] = mapped_column(
+    id_product: Mapped[uuid.UUID] = mapped_column(
         UUID,
-        ForeignKey('db_schema.catalog.id'),
+        ForeignKey('db_schema.products.id'),
         nullable=False
     )
-    id_material: Mapped[UUID] = mapped_column(
+    id_material: Mapped[uuid.UUID] = mapped_column(
         UUID,
         ForeignKey('db_schema.materials.id'),
         nullable=False
@@ -155,16 +174,15 @@ class CatalogMaterialModel(BaseDBModel):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
-
-class ColorMaterialModel(BaseDBModel):
+class ProductsColorsModel(BaseDBModel):
     __tablename__ = 'colors_material'
     id: Mapped[uuid_pk]
-    id_catalog: Mapped[UUID] = mapped_column(
+    id_product: Mapped[uuid.UUID] = mapped_column(
         UUID,
-        ForeignKey('db_schema.catalog.id'),
+        ForeignKey('db_schema.products.id'),
         nullable=False
     )
-    id_color: Mapped[UUID] = mapped_column(
+    id_color: Mapped[uuid.UUID] = mapped_column(
         UUID,
         ForeignKey('db_schema.colors.id'),
         nullable=False
@@ -172,74 +190,17 @@ class ColorMaterialModel(BaseDBModel):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
-class BasketModel(BaseDBModel):
+class BasketsModel(BaseDBModel):
     __tablename__ = 'baskets'
     id: Mapped[uuid_pk]
-    id_user: Mapped[UUID] = mapped_column(
-        UUID,
+    id_user: Mapped[int] = mapped_column(
+        Integer,
         ForeignKey('db_schema.users.id'),
         nullable=False
     )
-    id_catalog: Mapped[UUID] = mapped_column(
+    id_product: Mapped[uuid.UUID] = mapped_column(
         UUID,
-        ForeignKey('db_schema.catalog.id'),
-        nullable=False
-    )
-    count: Mapped[Integer] = mapped_column(
-        Integer,
-        default=1,
-        nullable=False
-    )
-    created_at: Mapped[created_at]
-    updated_at: Mapped[updated_at]
-
-
-class OrderUserModel(BaseDBModel):
-    __tablename__ = 'orders_users'
-    id: Mapped[uuid_pk]
-    id_user: Mapped[UUID] = mapped_column(
-        UUID,
-        ForeignKey('db_schema.users.id'),
-        nullable=False
-    )
-    country: Mapped[str] = mapped_column(
-        String,
-        nullable=False
-    )
-    region: Mapped[str] = mapped_column(
-        String,
-        nullable=False
-    )
-    city: Mapped[str] = mapped_column(
-        String,
-        nullable=False
-    )
-    street: Mapped[str] = mapped_column(
-        String,
-        nullable=False
-    )
-    apartment_number: Mapped[str] = mapped_column(
-        String,
-        nullable=False
-    )
-    postal_code: Mapped[int] = mapped_column(
-        Integer,
-        nullable=False
-    )
-    created_at: Mapped[created_at]
-    updated_at: Mapped[updated_at]
-
-class OrderModel(BaseDBModel):
-    __tablename__ = 'orders'
-    id: Mapped[uuid_pk]
-    id_order: Mapped[UUID] = mapped_column(
-        UUID,
-        ForeignKey('db_schema.orders.id'),
-        nullable=False
-    )
-    id_catalog: Mapped[UUID] = mapped_column(
-        UUID,
-        ForeignKey('db_schema.catalog.id'),
+        ForeignKey('db_schema.products.id'),
         nullable=False
     )
     count: Mapped[int] = mapped_column(
@@ -250,6 +211,104 @@ class OrderModel(BaseDBModel):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
+class AddressesModel(BaseDBModel):
+    __tablename__ = 'addresses'
+    id: Mapped[uuid_pk]
+    id_user: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey('db_schema.users.id'),
+        nullable=False
+    )
+    country: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False
+    )
+    region: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False
+    )
+    city: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False
+    )
+    street: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False
+    )
+    house_number: Mapped[str] = mapped_column(
+        String(10),
+        nullable=False
+    )
+    quadrature_number: Mapped[str] = mapped_column(
+        String(10),
+        nullable=False
+    )
+    postal_code: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False
+    )
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
 
+class OrdersModel(BaseDBModel):
+    __tablename__ = 'orders'
+    id: Mapped[uuid_pk]
+    id_user: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey('db_schema.users.id'),
+        nullable=False
+    )
+    id_addresses: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey('db_schema.addresses.id'),
+        nullable=False
+    )
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
 
+class OrdersProductsModel(BaseDBModel):
+    __tablename__ = 'orders_products'
+    id: Mapped[uuid_pk]
+    id_order: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey('db_schema.orders.id'),
+        nullable=False
+    )
+    id_product: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey('db_schema.products.id'),
+        nullable=False
+    )
+    count: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+    )
+    price: Mapped[float] = mapped_column(
+        Float,
+        nullable=False,
+        default=0.0
+    )
+    discount: Mapped[float] = mapped_column(
+        Float,
+        nullable=False,
+        default=0.0
+    )
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+class FavoritesModel(BaseDBModel):
+    __tablename__ = 'favorites'
+    id: Mapped[uuid_pk]
+    id_user: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey('db_schema.users.id'),
+        nullable=False
+    )
+    id_product: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey('db_schema.products.id'),
+        nullable=False
+    )
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
 

@@ -1,16 +1,19 @@
 from collections.abc import AsyncIterator
-from dishka import Provider, Scope, provide, provide_all
-from sqlalchemy.ext.asyncio import AsyncEngine
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.ext.asyncio import create_async_engine
+from typing import TypeVar, Type
+from dishka import Provider, Scope, provide
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from backend.config import DatabaseConfig
 from loguru import logger
-from backend.infra.postgres.gateways.base import GetAllGate
-from backend.infra.postgres.gateways.base import CreateGate
+from backend.infra.postgres.gateways.base import GetAllGate, CreateGate
+
+TTable = TypeVar("TTable")
+TEntity = TypeVar("TEntity")
+TCreate = TypeVar("TCreate")
+
 
 class PostgresProvider(Provider):
     scope = Scope.REQUEST
-    
+
     @provide(scope=Scope.APP)
     async def _get_engine(self, config: DatabaseConfig) -> AsyncIterator[AsyncEngine]:
         engine: AsyncEngine | None = None
@@ -19,7 +22,7 @@ class PostgresProvider(Provider):
                 engine = create_async_engine(config.dsn)
             yield engine
         except ConnectionRefusedError as e:
-            logger.error('Error connecting to database', e)
+            logger.error("Error connecting to database", e)
         finally:
             if engine is not None:
                 await engine.dispose()
@@ -30,16 +33,12 @@ class PostgresProvider(Provider):
     ) -> AsyncIterator[AsyncSession]:
         async with AsyncSession(bind=engine) as session:
             yield session
-    
 
     @provide
-    async def _get_all_gate[
-        TTable,
-        TEntity,
-    ](
+    async def _get_all_gate(
         self,
-        table: type[TTable],
-        schema_type: type[TEntity],
+        table: Type[TTable],
+        schema_type: Type[TEntity],
         session: AsyncSession,
     ) -> GetAllGate[TTable, TEntity]:
         return GetAllGate(
@@ -47,15 +46,12 @@ class PostgresProvider(Provider):
             table=table,
             schema_type=schema_type,
         )
-    
+
     @provide
-    async def _crate_gate[
-        TTable,
-        TCreate,
-    ](
+    async def _create_gate(
         self,
-        table: type[TTable],
-        create_schema_type: type[TCreate],
+        table: Type[TTable],
+        create_schema_type: Type[TCreate],
         session: AsyncSession,
     ) -> CreateGate[TTable, TCreate]:
         return CreateGate(

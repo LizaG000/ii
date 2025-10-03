@@ -10,8 +10,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ../src:/app/src:ro
-      - ../src/infra/postgres/migration/versions:/app/src/infra/postgres/migration/versions:rw
+      - ../backend:/app/src:ro
+      - ../backend/infra/postgres/migration/versions:/app/backend/infra/postgres/migration/versions:rw
 
   database:
     image: postgres:15.2

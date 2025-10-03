@@ -1,11 +1,10 @@
 from dataclasses import dataclass
-from uuid import UUID
 from sqlalchemy import select, insert
 from loguru import logger
 
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.infra.postgres.tables import BaseDBModel
+from backend.infra.postgres.tables import BaseDBModel
 from sqlalchemy import Select
 from sqlalchemy.sql.dml import ReturningInsert, ReturningUpdate
 from typing import TypeVar, Generic, Type

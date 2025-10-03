@@ -1,8 +1,8 @@
 """init
 
-Revision ID: 3e65435bb9d3
+Revision ID: edb984447bee
 Revises: 
-Create Date: 2025-09-14 17:27:08.994121
+Create Date: 2025-10-03 10:51:37.654547
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '3e65435bb9d3'
+revision: str = 'edb984447bee'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -46,7 +46,7 @@ def upgrade() -> None:
     schema='db_schema'
     )
     op.create_table('users',
-    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('first_name', sa.String(length=255), nullable=False),
     sa.Column('last_name', sa.String(length=255), nullable=False),
     sa.Column('middle_name', sa.String(length=255), nullable=True),
@@ -57,27 +57,15 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id'),
     schema='db_schema'
     )
-    op.create_table('catalog',
+    op.create_table('addresses',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('id_category', sa.UUID(), nullable=False),
-    sa.Column('name', sa.String(length=255), nullable=False),
-    sa.Column('description', sa.Integer(), nullable=False),
-    sa.Column('count', sa.Integer(), nullable=False),
-    sa.Column('price', sa.Float(), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['id_category'], ['db_schema.categories.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    schema='db_schema'
-    )
-    op.create_table('orders_users',
-    sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('id_user', sa.UUID(), nullable=False),
-    sa.Column('country', sa.String(), nullable=False),
-    sa.Column('region', sa.String(), nullable=False),
-    sa.Column('city', sa.String(), nullable=False),
-    sa.Column('street', sa.String(), nullable=False),
-    sa.Column('apartment_number', sa.String(), nullable=False),
+    sa.Column('id_user', sa.Integer(), nullable=False),
+    sa.Column('country', sa.String(length=255), nullable=False),
+    sa.Column('region', sa.String(length=255), nullable=False),
+    sa.Column('city', sa.String(length=255), nullable=False),
+    sa.Column('street', sa.String(length=255), nullable=False),
+    sa.Column('house_number', sa.String(length=10), nullable=False),
+    sa.Column('quadrature_number', sa.String(length=10), nullable=False),
     sa.Column('postal_code', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
@@ -85,49 +73,91 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id'),
     schema='db_schema'
     )
-    op.create_table('baskets',
+    op.create_table('products',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('id_user', sa.UUID(), nullable=False),
-    sa.Column('id_catalog', sa.UUID(), nullable=False),
+    sa.Column('id_category', sa.UUID(), nullable=False),
+    sa.Column('name', sa.String(length=255), nullable=False),
+    sa.Column('description', sa.Integer(), nullable=False),
     sa.Column('count', sa.Integer(), nullable=False),
+    sa.Column('price', sa.Float(), nullable=False),
+    sa.Column('discount', sa.Float(), nullable=False),
+    sa.Column('length', sa.Float(), nullable=False),
+    sa.Column('height', sa.Float(), nullable=False),
+    sa.Column('width', sa.Float(), nullable=False),
+    sa.Column('images', sa.ARRAY(sa.String(length=255)), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['id_catalog'], ['db_schema.catalog.id'], ),
-    sa.ForeignKeyConstraint(['id_user'], ['db_schema.users.id'], ),
+    sa.ForeignKeyConstraint(['id_category'], ['db_schema.categories.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='db_schema'
     )
-    op.create_table('catalog_material',
+    op.create_table('baskets',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('id_catalog', sa.UUID(), nullable=False),
-    sa.Column('id_material', sa.UUID(), nullable=False),
+    sa.Column('id_user', sa.Integer(), nullable=False),
+    sa.Column('id_product', sa.UUID(), nullable=False),
+    sa.Column('count', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['id_catalog'], ['db_schema.catalog.id'], ),
-    sa.ForeignKeyConstraint(['id_material'], ['db_schema.materials.id'], ),
+    sa.ForeignKeyConstraint(['id_product'], ['db_schema.products.id'], ),
+    sa.ForeignKeyConstraint(['id_user'], ['db_schema.users.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='db_schema'
     )
     op.create_table('colors_material',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('id_catalog', sa.UUID(), nullable=False),
+    sa.Column('id_product', sa.UUID(), nullable=False),
     sa.Column('id_color', sa.UUID(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['id_catalog'], ['db_schema.catalog.id'], ),
     sa.ForeignKeyConstraint(['id_color'], ['db_schema.colors.id'], ),
+    sa.ForeignKeyConstraint(['id_product'], ['db_schema.products.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    schema='db_schema'
+    )
+    op.create_table('favorites',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('id_user', sa.Integer(), nullable=False),
+    sa.Column('id_product', sa.UUID(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
+    sa.ForeignKeyConstraint(['id_product'], ['db_schema.products.id'], ),
+    sa.ForeignKeyConstraint(['id_user'], ['db_schema.users.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='db_schema'
     )
     op.create_table('orders',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('id_order', sa.UUID(), nullable=False),
-    sa.Column('id_catalog', sa.UUID(), nullable=False),
-    sa.Column('count', sa.Integer(), nullable=False),
+    sa.Column('id_user', sa.Integer(), nullable=False),
+    sa.Column('id_addresses', sa.UUID(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['id_catalog'], ['db_schema.catalog.id'], ),
+    sa.ForeignKeyConstraint(['id_addresses'], ['db_schema.addresses.id'], ),
+    sa.ForeignKeyConstraint(['id_user'], ['db_schema.users.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    schema='db_schema'
+    )
+    op.create_table('products_materials',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('id_product', sa.UUID(), nullable=False),
+    sa.Column('id_material', sa.UUID(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
+    sa.ForeignKeyConstraint(['id_material'], ['db_schema.materials.id'], ),
+    sa.ForeignKeyConstraint(['id_product'], ['db_schema.products.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    schema='db_schema'
+    )
+    op.create_table('orders_products',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('id_order', sa.UUID(), nullable=False),
+    sa.Column('id_product', sa.UUID(), nullable=False),
+    sa.Column('count', sa.Integer(), nullable=False),
+    sa.Column('price', sa.Float(), nullable=False),
+    sa.Column('discount', sa.Float(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['id_order'], ['db_schema.orders.id'], ),
+    sa.ForeignKeyConstraint(['id_product'], ['db_schema.products.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='db_schema'
     )
@@ -137,12 +167,14 @@ def upgrade() -> None:
 def downgrade() -> None:
     """Downgrade schema."""
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('orders_products', schema='db_schema')
+    op.drop_table('products_materials', schema='db_schema')
     op.drop_table('orders', schema='db_schema')
+    op.drop_table('favorites', schema='db_schema')
     op.drop_table('colors_material', schema='db_schema')
-    op.drop_table('catalog_material', schema='db_schema')
     op.drop_table('baskets', schema='db_schema')
-    op.drop_table('orders_users', schema='db_schema')
-    op.drop_table('catalog', schema='db_schema')
+    op.drop_table('products', schema='db_schema')
+    op.drop_table('addresses', schema='db_schema')
     op.drop_table('users', schema='db_schema')
     op.drop_table('materials', schema='db_schema')
     op.drop_table('colors', schema='db_schema')

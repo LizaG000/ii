@@ -9,8 +9,6 @@ from backend.config import Config
 from backend.config import ApiConfig
 from backend.config import DatabaseConfig
 
-from backend.usecase.users.create import CreateUserUsecase
-from backend.usecase.users.get_all import GetUsersUsecase
 
 class MainProvider(Provider):
     scope = Scope.REQUEST
@@ -28,7 +26,5 @@ class MainProvider(Provider):
     _request = from_context(provides=Request, scope=Scope.REQUEST)
 
     _get_usecases = provide_all(
-        CreateUserUsecase,
-        GetUsersUsecase,
     )
 
